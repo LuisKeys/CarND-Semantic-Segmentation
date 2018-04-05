@@ -32,8 +32,18 @@ def load_vgg(sess, vgg_path):
     vgg_layer3_out_tensor_name = 'layer3_out:0'
     vgg_layer4_out_tensor_name = 'layer4_out:0'
     vgg_layer7_out_tensor_name = 'layer7_out:0'
+
+    tf.saved_model.loader.load(sess, [vgg_tag], vgg_path)
+
+    graph = tf.get_default_graph()
+    input = graph.get_tensor_by_name(vgg_input_tensor_name)
+    keep = graph.get_tensor_by_name(vgg_keep_prob_tensor_name)
+    layer3 = graph.get_tensor_by_name(vgg_layer3_out_tensor_name)
+    layer4 = graph.get_tensor_by_name(vgg_layer4_out_tensor_name)
+    layer7 = graph.get_tensor_by_name(vgg_layer7_out_tensor_name)
     
-    return None, None, None, None, None
+    return input, keep, layer3, layer4, layer7
+
 tests.test_load_vgg(load_vgg, tf)
 
 
@@ -47,7 +57,24 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     :return: The Tensor for the last layer of output
     """
     # TODO: Implement function
-    return None
+    layer7_1x1 = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3))
+
+    layer4_1x1 = tf.layers.conv2d(vgg_layer4_out, num_classes, 1, padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3));
+
+    layer3_1x1 = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, padding='same', kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3));
+
+    initializer7 = tf.truncated_normal_initializer(stddev=0.01)
+    layer7_upsample = tf.layers.conv2d_transpose(layer7_1x1, num_classes, 5, 2, padding = 'SAME', kernel_initializer = initializer7)
+    layer4_skip = tf.add(layer7_upsample,layer4_1x1)
+
+    initializer4 = tf.truncated_normal_initializer(stddev=0.01)
+    layer4_upsample = tf.layers.conv2d_transpose(layer4_skip, num_classes, 5, 2, padding = 'SAME', kernel_initializer = initializer4)
+    layer3_skip = tf.add(layer4_upsample,layer3_1x1)
+
+    initializerOutput = tf.truncated_normal_initializer(stddev=0.01)
+    output = tf.layers.conv2d_transpose(layer3_skip, num_classes, 16, 8, padding = 'SAME', kernel_initializer = initializerOutput)
+
+    return output
 tests.test_layers(layers)
 
 
@@ -61,7 +88,8 @@ def optimize(nn_last_layer, correct_label, learning_rate, num_classes):
     :return: Tuple of (logits, train_op, cross_entropy_loss)
     """
     # TODO: Implement function
-    return None, None, None
+    logits = tf.reshape(input, (-1, num_classes));
+
 tests.test_optimize(optimize)
 
 
@@ -81,7 +109,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     :param learning_rate: TF Placeholder for learning rate
     """
     # TODO: Implement function
-    pass
+
 tests.test_train_nn(train_nn)
 
 
