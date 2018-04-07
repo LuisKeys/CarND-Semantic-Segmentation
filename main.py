@@ -1,4 +1,7 @@
+import os
 import os.path
+# Line to prevent TF to use GPU 
+os.environ["CUDA_VISIBLE_DEVICES"]="-1" 
 import tensorflow as tf
 import helper
 import warnings
@@ -134,14 +137,14 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     """
     # TODO: Implement function
     sess.run(tf.global_variables_initializer())
-    
+
     for i in range(epochs):
         print("Epoch:")
         print(i+1)
         for image, label in get_batches_fn(batch_size):
             _, loss = sess.run([train_op, cross_entropy_loss], 
                                feed_dict={input_image: image, correct_label: label, 
-                                          keep_prob: 0.5, learning_rate: 0.0005}
+                                          keep_prob: 0.5, learning_rate: 0.001}
                                )
             print("Loss: = {:.4f}".format(loss))
         print(" - - - - ")
@@ -180,8 +183,8 @@ def run():
         # small batch size due to limited space in my GTX1060 baord which is used to feed 2 displays
         # and process tf batches at the same time baut a bigger value would be used in case there is 
         # enough RAM in the video board
-        epochs = 50
-        batch_size = 4
+        epochs = 5
+        batch_size = 10
 
         input, keep, layer3, layer4, layer7 = load_vgg(sess, vgg_path)
         output = layers(layer3, layer4, layer7, num_classes)
