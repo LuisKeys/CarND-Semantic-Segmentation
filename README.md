@@ -2,34 +2,38 @@
 ### Introduction
 In this project, you'll label the pixels of a road in images using a Fully Convolutional Network (FCN).
 
+### Project description
 The project FCN is based on an VGG-16 image classifier architecture to perform semantic segmentation 
-to identify road area pixels (KITTI data set).
+to identify road area pixels (KITTI data set was provided to train the NN).
 
-### Network Architecture:
-A pre-trained VGG-16 network is provided and was converted to a FCN,
+### Network architecture:
+A pre-trained VGG-16 network was provided and it was converted to a FCN,
 adding additional layers, using upsample technique and connections skip. 
-The upsampling is done using transpose convolutioins operations, which includes a regularizer 
-to improve pixels clasifitacion precision.
+The upsampling is done using transpose convolutioins operations, 
+which includes a regularizer to improve pixels clasifitacion precision.
 
 ### Optimizer:
-The loss function is cross-entropy and the optimizer is Adam.
+The loss function is cross-entropy and the optimizer is Adam,
+which is a quite simple and effective solution.
 
 ### Training:
 The selected hyperparameters for training are the following:
 
-keep_prob: 0.5
-learning_rate: 0.001
 epochs: 5
 batch_size: 10
-Results
+
+### Training results:
 Final Loss for Epoch 5 was 0.11, which looks a bit large but the results are quite acceptable.
 The small number of epochs and large learning rate were selected to train fast with CPU, because 
 the GPU RAM was not enought (about 5Gb were used by the proecess), and with an I7 7700 each Epoch 
 takes about 5 minutes, so the FCN was trained in about 25 minutes.
 
 With a GPU with more RAM, a learning rate of 0.0005 would be selected and at least 20 Epochs.
-Anyway the positive aspect is that with such a large learning rate overfitting was completelly prevented,
-and the model generalized quite well, a key for this problem.
+Anyway the positive aspect is that with such a large learning converged and avoid local minimums.
+
+### Improvements:
+I suggest to combine this technique with CV channels filters, colors filter, gradients, and 
+other lane lines recognition to get a more solid road recognition system.
 
 The following are the sample images:
 
