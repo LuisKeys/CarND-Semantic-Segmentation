@@ -2,6 +2,45 @@
 ### Introduction
 In this project, you'll label the pixels of a road in images using a Fully Convolutional Network (FCN).
 
+The project FCN is based on an VGG-16 image classifier architecture to perform semantic segmentation 
+to identify road area pixels (KITTI data set).
+
+### Network Architecture:
+A pre-trained VGG-16 network is provided and was converted to a FCN,
+adding additional layers, using upsample technique and connections skip. 
+The upsampling is done using transpose convolutioins operations, which includes a regularizer 
+to improve pixels clasifitacion precision.
+
+### Optimizer:
+The loss function is cross-entropy and the optimizer is Adam.
+
+### Training:
+The selected hyperparameters for training are the following:
+
+keep_prob: 0.5
+learning_rate: 0.001
+epochs: 5
+batch_size: 10
+Results
+Final Loss for Epoch 5 was 0.11, which looks a bit large but the results are quite acceptable.
+The small number of epochs and large learning rate were selected to train fast with CPU, because 
+the GPU RAM was not enought (about 5Gb were used by the proecess), and with an I7 7700 each Epoch 
+takes about 5 minutes, so the FCN was trained in about 25 minutes.
+
+With a GPU with more RAM, a learning rate of 0.0005 would be selected and at least 20 Epochs.
+Anyway the positive aspect is that with such a large learning rate overfitting was completelly prevented,
+and the model generalized quite well, a key for this problem.
+
+The following are the sample images:
+
+![image1]( ./sample1.png "")
+![image2]( ./sample2.png "")
+![image3]( ./sample3.png "")
+![image4]( ./sample4.png "")
+![image5]( ./sample5.png "")
+![image6]( ./sample6.png "")
+
+
 ### Setup
 ##### Frameworks and Packages
 Make sure you have the following is installed:
